@@ -114,6 +114,7 @@ With this release the systemd configuration files for InfluxDB will use the syst
 - [#7084](https://github.com/influxdata/influxdb/pull/7084): Tombstone memory improvements
 - [#6543](https://github.com/influxdata/influxdb/issues/6543): Fix parseFill to check for fill ident before attempting to parse an expression.
 - [#7032](https://github.com/influxdata/influxdb/pull/7032): Copy tags in influx_stress to avoid a concurrent write panic on a map.
+- [#7028](https://github.com/influxdata/influxdb/pull/7028): Do not run continuous queries that have no time span.
 
 ## v0.13.0 [2016-05-12]
 
