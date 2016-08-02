@@ -33,6 +33,10 @@ type HTTPConfig struct {
 	// Password is the influxdb password, optional
 	Password string
 
+	// Token for authenticating with influxdb, optional
+	// If set Username and Password are ignored
+	Token string
+
 	// UserAgent is the http User Agent, defaults to "InfluxDBClient"
 	UserAgent string
 
@@ -118,6 +122,7 @@ func NewHTTPClient(conf HTTPConfig) (Client, error) {
 		url:       *u,
 		username:  conf.Username,
 		password:  conf.Password,
+		token:     conf.Token,
 		useragent: conf.UserAgent,
 		httpClient: &http.Client{
 			Timeout:   conf.Timeout,
@@ -141,7 +146,9 @@ func (c *client) Ping(timeout time.Duration) (time.Duration, string, error) {
 
 	req.Header.Set("User-Agent", c.useragent)
 
-	if c.username != "" {
+	if c.token != "" {
+		req.Header.Set("Authorization", "Bearer "+c.token)
+	} else if c.username != "" {
 		req.SetBasicAuth(c.username, c.password)
 	}
 
@@ -221,6 +228,7 @@ type client struct {
 	url        url.URL
 	username   string
 	password   string
+	token      string
 	useragent  string
 	httpClient *http.Client
 	transport  *http.Transport
@@ -451,7 +459,9 @@ func (c *client) Write(bp BatchPoints) error {
 	}
 	req.Header.Set("Content-Type", "")
 	req.Header.Set("User-Agent", c.useragent)
-	if c.username != "" {
+	if c.token != "" {
+		req.Header.Set("Authorization", "Bearer "+c.token)
+	} else if c.username != "" {
 		req.SetBasicAuth(c.username, c.password)
 	}
 
@@ -547,7 +557,9 @@ func (c *client) Query(q Query) (*Response, error) {
 	}
 	req.Header.Set("Content-Type", "")
 	req.Header.Set("User-Agent", c.useragent)
-	if c.username != "" {
+	if c.token != "" {
+		req.Header.Set("Authorization", "Bearer "+c.token)
+	} else if c.username != "" {
 		req.SetBasicAuth(c.username, c.password)
 	}
 
