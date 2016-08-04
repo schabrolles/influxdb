@@ -709,6 +709,9 @@ def package(build_output, version, nightly=False, rc=None, iteration=1, static=F
                     elif package_type not in ['zip', 'tar'] and static or "static_" in arch:
                         logging.info("Skipping package type '{}' for static builds.".format(package_type))
                     else:
+                        if package_type == 'deb' and arch == 'ppc64le':
+                            logging.info("Switching arch to \"ppc64el\" for .deb generation.")
+                            package_arch = 'ppc64el'
                         fpm_command = "fpm {} --name {} -a {} -t {} --version {} --iteration {} -C {} -p {} ".format(
                             fpm_common_args,
                             name,
